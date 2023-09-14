@@ -17,11 +17,10 @@
   <div
     class="relative mx-auto max-w-screen-xl px-4 py-32 sm:px-6 lg:flex lg:h-screen lg:items-center lg:px-8"
   >
-    <div class="max-w-xl text-center ltr:sm:text-left rtl:sm:text-right">
+    <div class="max-w-xl  ltr:sm:text-left rtl:sm:text-right">
       <h1 class="text-3xl font-extrabold sm:text-5xl text-neutral-100">
        Ayo Sekolah Di
-
-        <strong class="block font-extrabold text-rose-700">
+        <strong class="block font-extrabold text-rose-600 mt-2">
          SMK Bina Nusantara Semarang
         </strong>
       </h1>
@@ -31,7 +30,7 @@
 SMK Bina Nusantara Adalah sebuah Sekolah Menengah Kejuruan yang didirikan oleh Yayasan Harapan Bangsa sejak 9 Mei 2009, yang berlokasi di Ungaran, Adapun Motto dari SMK Bina Nusantara yaitu Cerdas, Santun dan Berbudi Luhur.
       </p>
 
-      <div class="mt-8 flex flex-wrap gap-4 text-center">
+      <div class="mt-8 flex flex-wrap gap-4 text-center mx-auto">
         <a
           href="#"
           class="block w-full rounded bg-rose-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-rose-700 focus:outline-none focus:ring active:bg-rose-500 sm:w-auto"
