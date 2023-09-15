@@ -16,81 +16,75 @@
         <div class="ml-16 mt-12">
         <?php $this->load->view('component/navbar')?>
 
-<div class="overflow-x-auto">
-  <table class=" divide-y-2 divide-gray-200 bg-white text-sm w-[1250px] overflow-x-auto">
-    <thead class="ltr:text-left rtl:text-right">
+<div class="overflow-x-auto overflow-y-auto">
+<a
+            href="tambah_siswa"
+            class="inline-block rounded bg-sky-600 px-4 py-2 text-xs font-medium text-white hover:bg-sky-700"
+          >
+            Tambah
+          </a>
+  <table class=" divide-y-2 divide-gray-200 bg-white text-sm w-[900px] overflow-x-auto overflow-y-auto">
+    <thead class="">
       <tr>
         <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-          Name
+          No
         </th>
         <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-          Date of Birth
+         Nama Siswa
         </th>
         <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-          Role
+          NISN
         </th>
         <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-          Salary
+          Gender
         </th>
-        <th class="px-4 py-2"></th>
+        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+         Kelas
+        </th>
+        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+          Aksi
+        </th>
       </tr>
     </thead>
 
     <tbody class="divide-y divide-gray-200">
-      <tr>
-        <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-          John Doe
-        </td>
-        <td class="whitespace-nowrap px-4 py-2 text-gray-700">24/05/1995</td>
-        <td class="whitespace-nowrap px-4 py-2 text-gray-700">Web Developer</td>
-        <td class="whitespace-nowrap px-4 py-2 text-gray-700">$120,000</td>
-        <td class="whitespace-nowrap px-4 py-2">
-          <a
-            href="#"
-            class="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700"
-          >
-            View
-          </a>
-        </td>
-      </tr>
-
-      <tr>
-        <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-          Jane Doe
-        </td>
-        <td class="whitespace-nowrap px-4 py-2 text-gray-700">04/11/1980</td>
-        <td class="whitespace-nowrap px-4 py-2 text-gray-700">Web Designer</td>
-        <td class="whitespace-nowrap px-4 py-2 text-gray-700">$100,000</td>
-        <td class="whitespace-nowrap px-4 py-2">
-          <a
-            href="#"
-            class="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700"
-          >
-            View
-          </a>
-        </td>
-      </tr>
-
-      <tr>
-        <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-          Gary Barlow
-        </td>
-        <td class="whitespace-nowrap px-4 py-2 text-gray-700">24/05/1995</td>
-        <td class="whitespace-nowrap px-4 py-2 text-gray-700">Singer</td>
-        <td class="whitespace-nowrap px-4 py-2 text-gray-700">$20,000</td>
-        <td class="whitespace-nowrap px-4 py-2">
-          <a
-            href="#"
-            class="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700"
-          >
-            View
-          </a>
-        </td>
-      </tr>
+      <?php $no = 0;foreach ($siswa as $row): $no++?>
+	      <tr>
+	        <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-center">
+	         <?php echo $no ?>
+	        </td>
+	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center">  <?php echo $row->nama_siswa ?></td>
+	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center"><?php echo $row->nisn ?></td>
+	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center"><?php echo $row->gender ?></td>
+	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center"><?php echo tampil_full_kelas_byid($row->id_kelas) ?></td>
+	        <td class="whitespace-nowrap px-4 py-2 text-center">
+	          <a
+	            href="#"
+	            class="inline-block rounded bg-sky-600 px-4 py-2 text-xs font-medium text-white hover:bg-sky-700"
+	          >
+	            Ubah
+	          </a>
+	          <button
+	           onclick= "hapus(<?php echo $row->id_siswa ?>)"
+	            class="inline-block rounded bg-red-600 px-4 py-2 text-xs font-medium text-white hover:bg-red-700"
+	          >
+	            Hapus
+	          </button>
+	        </td>
+	      </tr>
+	      <?php endforeach?>
     </tbody>
   </table>
 </div>
         </div>
     </div>
+    <script>
+      function hapus(id) {
+        var yes = confirm("Yakin mau dihapus?")
+        if(yes == true) {
+          window.location.href= "<?php echo base_url('admin/hapus_siswa/') ?>" + id;
+        }
+      }
+    </script>
 </body>
 </html>
