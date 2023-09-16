@@ -59,7 +59,7 @@
 	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center"><?php echo tampil_full_kelas_byid($row->id_kelas) ?></td>
 	        <td class="whitespace-nowrap px-4 py-2 text-center">
 	          <a
-	            href="#"
+            href="<?php echo base_url('Admin/ubah_siswa/').$row->id_siswa?>"
 	            class="inline-block rounded bg-sky-600 px-4 py-2 text-xs font-medium text-white hover:bg-sky-700"
 	          >
 	            Ubah

@@ -24,5 +24,12 @@ class M_model extends CI_Model
         $data = $this->db->update($table, $data, $where);
         return $this->db->affected_rows();
     }
+    public function get_by_id($table, $id_column, $id_siswa)
+    {
+        $data = $this->db->where($id_column, $id_siswa) -> get($table);
+        return $data;
+    }
+    
+
 
 }
