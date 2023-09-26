@@ -38,7 +38,11 @@
                     <?php endforeach?>
                 </select>
             </div>
-            <div class="col-1 text-start">
+            <div class="md-4">
+            <label for="kelas" class="form-label">Foto</label>
+            <input type="file" class="form-control" id="foto" name="foto">
+            </div>
+            <div class=" col-1 text-start">
                 <a href="siswa" class="btn btn-danger px-3">Kembali</a>
             </div>
             <div class="col-11 text-end">

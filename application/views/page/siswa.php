@@ -30,6 +30,9 @@
           No
         </th>
         <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+          Foto
+        </th>
+        <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
          Nama Siswa
         </th>
         <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
@@ -53,6 +56,7 @@
 	        <td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 text-center">
 	         <?php echo $no ?>
 	        </td>
+	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center"> <img src="<?php echo base_url('images/siswa/'.$row->foto)?>" alt="" width="50" height="50"></td>
 	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center">  <?php echo $row->nama_siswa ?></td>
 	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center"><?php echo $row->nisn ?></td>
 	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center"><?php echo $row->gender ?></td>
