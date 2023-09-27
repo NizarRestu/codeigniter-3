@@ -30,6 +30,10 @@
                 <label for="alamat" class="form-label">Konfirmasi Password</label>
                 <input type="text" class="form-control" id="konfirmasi_password" name="konfirmasi_password">
             </div>
+            <div class="md-4">
+            <label for="kelas" class="form-label">Foto</label>
+            <input type="file" class="form-control" id="foto" name="foto">
+            </div>
             <div class="col-1 text-start">
                 <a href="<?php echo base_url('Admin'); ?>" class="btn btn-danger px-3">Kembali</a>
             </div>
