@@ -10,7 +10,7 @@ class Admin extends CI_Controller
         $this->load->model('m_model');
         $this->load->helper('my_helper');
         $this->load->library('upload');
-        if ($this->session->userdata('logged_in') != true) {
+        if ($this->session->userdata('logged_in') != true && $this->session->userdata('role') !== 'admin') {
             redirect(base_url() . 'auth');
         }
     }
@@ -22,23 +22,6 @@ class Admin extends CI_Controller
         $data['guru'] = $this->m_model->get_data('guru')->num_rows();
         $data['mapel'] = $this->m_model->get_data('mapel')->num_rows();
         $this->load->view('page/dashboard', $data);
-    }
-    public function upload_image_siswa($value)
-    {
-        $kode = round(microtime(true) * 1000);
-        $config['upload_path'] = './images/siswa/';
-        $config['allowed_types'] = 'jpg|png|jpeg';
-        $config['max_size'] = 30000;
-        $config['file_name'] = $kode;
-        $this->upload->initialize($config);
-        if (!$this->upload->do_upload($value)) {
-            return array(false, '');
-        } else {
-            $fn = $this->upload->data();
-            $nama = $fn['file_name'];
-            return array(true, $nama);
-        }
-
     }
     public function upload_image_admin($value)
     {
@@ -85,13 +68,36 @@ class Admin extends CI_Controller
     }
     public function hapus_siswa($id)
     {
-        $this->m_model->delete('siswa', 'id_siswa', $id);
-        redirect(base_url('admin/siswa'));
+     $siswa= $this->m_model->get_by_id('siswa','id_siswa',$id)->row();
+     if($siswa){
+        if($siswa->foto !== 'User.png') {
+            $file_path = './images/siswa/' .$siswa->foto;
+            if(file_exists($file_path)){
+                if(unlink($file_path)){
+                    $this->m_model->delete('siswa' ,'id_siswa',$id);
+                    redirect(base_url('admin/siswa'));
+                } else{
+                    echo "Gagal manghapus file";
+                }
+            } else{
+                echo "File tidak ditemukan";
+            }
+        } else{
+            $this->m_model->delete('siswa' ,'id_siswa',$id);
+            redirect(base_url('admin/siswa'));
+        }
+     } else{
+        echo "Siswa tidak ditemukan";
+     }
     }
 
     public function tambah_siswa_form()
     {
-        $foto = $this->upload_image_siswa('foto');
+        $foto = $_FILES['foto']['name'];
+		$foto_temp = $_FILES['foto']['tmp_name'];
+        $kode = round(microtime(true) * 1000);
+        $file_name = $kode . '_' . $foto;
+        $upload_path = './images/siswa/' . $file_name;
         if ($foto[0] == false) {
             $data = [
                 'foto' => 'User.png',
@@ -105,7 +111,7 @@ class Admin extends CI_Controller
             redirect(base_url('admin/siswa'));
         } else {
             $data = [
-                'foto' => $foto[1],
+                'foto' =>  $file_name,
                 'nama_siswa' => $this->input->post('nama_siswa'),
                 'nisn' => $this->input->post('nisn'),
                 'gender' => $this->input->post('gender'),
@@ -120,20 +126,51 @@ class Admin extends CI_Controller
 
     public function ubah_siswa_form()
     {
-        $data = [
-            'nama_siswa' => $this->input->post('nama_siswa'),
-            'nisn' => $this->input->post('nisn'),
-            'gender' => $this->input->post('gender'),
-            'id_kelas' => $this->input->post('id_kelas'),
-        ];
-        $eksekusi = $this->m_model->update('siswa', $data, array('id_siswa' => $this->input->post('id_siswa')));
-        if ($eksekusi) {
-            $this->session->set_flashdata('sukses', 'berhasil');
-            redirect(base_url('admin/siswa'));
-        } else {
-            $this->session->set_flashdata('error', 'gagal...');
-            redirect(base_url('admin/siswa/ubah_siswa/' . $this->input->post('id_siswa')));
-        }
+        $foto = $_FILES['foto']['name'];
+		$foto_temp = $_FILES['foto']['tmp_name'];
+
+		// Jika ada foto yang diunggah
+		if ($foto) {
+			$kode = round(microtime(true) * 1000);
+			$file_name = $kode . '_' . $foto;
+			$upload_path = './images/siswa/' . $file_name;
+
+			if (move_uploaded_file($foto_temp, $upload_path)) {
+				// Hapus foto lama jika ada
+				$old_file = $this->m_model->get_siswa_foto_by_id($this->input->post('id_siswa'));
+				if ($old_file && file_exists('./images/siswa/' . $old_file)) {
+					unlink('./images/siswa/' . $old_file);
+				}
+
+				$data = [
+					'foto' => $file_name,
+					'nama_siswa' => $this->input->post('nama_siswa'),
+					'nisn' => $this->input->post('nisn'),
+					'gender' => $this->input->post('gender'),
+					'id_kelas' => $this->input->post('id_kelas'),
+				];
+			} else {
+				// Gagal mengunggah foto baru
+				redirect(base_url('admin/ubah_siswa/' . $this->input->post('id_siswa')));
+			}
+		} else {
+			// Jika tidak ada foto yang diunggah
+			$data = [
+				'nama_siswa' => $this->input->post('nama'),
+				'nisn' => $this->input->post('nisn'),
+				'gender' => $this->input->post('gender'),
+				'id_kelas' => $this->input->post('kelas'),
+			];
+		}
+
+		// Eksekusi dengan model ubah_data
+		$eksekusi = $this->m_model->update('siswa', $data, array('id_siswa' => $this->input->post('id_siswa')));
+
+		if ($eksekusi) {
+			redirect(base_url('admin/siswa'));
+		} else {
+			redirect(base_url('admin/ubah_siswa/' . $this->input->post('id_siswa')));
+		}
     }
     public function aksi_ubah_akun()
     {

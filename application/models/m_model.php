@@ -29,6 +29,21 @@ class M_model extends CI_Model
         $data = $this->db->where($id_column, $id_siswa) -> get($table);
         return $data;
     }
+    public function get_siswa_foto_by_id($id_siswa)
+    {
+        $this->db->select('foto');
+        $this->db->from('siswa');
+        $this->db->where('id_siswa', $id_siswa);
+        $query = $this->db->get();
+    
+        if ($query->num_rows() > 0) {
+            $result = $query->row();
+            return $result->foto;
+        } else {
+            return false;
+        }
+    }
+
     
 
 
