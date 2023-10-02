@@ -23,6 +23,12 @@
           >
             Tambah
           </a>
+<a
+  href="<?php echo base_url('Keuangan/exportToExcel'); ?>"
+            class="inline-block rounded bg-sky-600 px-4 py-2 text-xs font-medium text-white hover:bg-sky-700"
+          >
+            Export
+          </a>
   <table class=" divide-y-2 divide-gray-200 bg-white text-sm w-[900px] overflow-x-auto overflow-y-auto">
     <thead class="">
       <tr>
@@ -52,7 +58,7 @@
 	        </td>
 	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center">  <?php echo  tampil_full_siswa_byid($row->id_siswa) ?></td>
 	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center"><?php echo $row->jenis_pembayaran ?></td>
-	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center"><?php echo $row->total_pembayaran ?></td>
+	        <td class="whitespace-nowrap px-4 py-2 text-gray-700 text-center"><?php echo convRupiah($row->total_pembayaran) ?></td>
 	        <td class="whitespace-nowrap px-4 py-2 text-center">
 	          <a
             href="<?php echo base_url('Keuangan/ubah_pembayaran/').$row->id?>"
