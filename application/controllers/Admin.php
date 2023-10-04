@@ -1,6 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 class Admin extends CI_Controller
 {
 
@@ -228,5 +231,123 @@ class Admin extends CI_Controller
                 redirect(base_url('admin/akun'));
             }
         }
+    }
+    public function exportToExcel() {
+
+        // Load autoloader Composer
+        require 'vendor/autoload.php';
+        
+        $spreadsheet = new Spreadsheet();
+
+        // Buat lembar kerja aktif
+       $sheet = $spreadsheet->getActiveSheet();
+        // Data yang akan diekspor (contoh data)
+        $data = $this->m_model->get_data('siswa')->result();
+        
+        // Buat objek Spreadsheet
+        $headers = ['ID','NAMA SISWA','NISN', 'GENDER', 'KELAS'];
+        $rowIndex = 1;
+        foreach ($headers as $header) {
+            $sheet->setCellValueByColumnAndRow($rowIndex, 1, $header);
+            $rowIndex++;
+        }
+        
+        // Isi data dari database
+        $rowIndex = 2;
+        foreach ($data as $rowData) {
+            $columnIndex = 1;
+            $id = ''; // Variabel untuk menyimpan id
+            $siswaName = ''; // Variabel untuk menyimpan nama siswa
+            $nisn = ''; // Variabel untuk menyimpan jenis pembayaran
+            $gender = ''; // Variabel untuk menyimpan total pembayaran
+            $kelas = ''; // Variabel untuk menyimpan kelas
+        
+            foreach ($rowData as $cellName => $cellData) {
+                if($cellName == 'id'){
+                    $id = $cellData;
+                }elseif ($cellName == 'nama_siswa') {
+                   $siswaName = $cellData;
+                } elseif ($cellName == 'nisn') {
+                    $nisn = $cellData;
+                } elseif ($cellName == 'gender') {
+                    $gender = $cellData;
+                } elseif ($cellName == 'id_kelas') {
+                    $kelas = tampil_full_kelas_byid($cellData);
+                }
+        
+                // Anda juga dapat menambahkan logika lain jika perlu
+                // Contoh: Menghitung total pembayaran, mengubah format tanggal, dll.
+                
+                // Contoh: $sheet->setCellValueByColumnAndRow($columnIndex, $rowIndex, $cellData);
+                $columnIndex++;
+            }
+        
+            // Setelah loop, Anda memiliki data yang diperlukan dari setiap kolom
+            // Anda dapat mengisinya ke dalam lembar kerja Excel di sini
+            $sheet->setCellValueByColumnAndRow(1, $rowIndex, $id);
+            $sheet->setCellValueByColumnAndRow(2, $rowIndex, $siswaName);
+            $sheet->setCellValueByColumnAndRow(3, $rowIndex, $nisn);
+            $sheet->setCellValueByColumnAndRow(4, $rowIndex, $gender);
+            $sheet->setCellValueByColumnAndRow(5, $rowIndex, $kelas);
+        
+            $rowIndex++;
+        }
+        // Auto size kolom berdasarkan konten
+        foreach (range('A', $sheet->getHighestDataColumn()) as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+        
+        // Set style header
+        $headerStyle = [
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+        ];
+        $sheet->getStyle('A1:' . $sheet->getHighestDataColumn() . '1')->applyFromArray($headerStyle);
+        
+        // Konfigurasi output Excel
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'SISWA.xlsx'; // Nama file Excel yang akan dihasilkan
+        
+        // Set header HTTP untuk mengunduh file Excel
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        
+        // Outputkan file Excel ke browser
+        $writer->save('php://output');
+        
+    }
+    public function import() {
+        require 'vendor/autoload.php';
+       if(isset($_FILES["file"]["name"])){
+        $path = $_FILES["file"]["tmp_name"];
+        $object = PhpOffice\PhpSpreadsheet\IOFactory::load($path);
+        foreach($object->getWorksheetIterator() as $worksheet)
+        {
+            $highestRow= $worksheet->getHighestRow();
+            $highestColumn = $worksheet->getHighestColumn();
+            for($row=2 ; $row<=$highestRow; $row++) {
+                $nama_siswa = $worksheet->getCellByColumnAndRow(2,$row)->getValue();
+                $nisn = $worksheet->getCellByColumnAndRow(3,$row)->getValue();
+                $gender = $worksheet->getCellByColumnAndRow(4,$row)->getValue();
+                $tingkat_kelas = $worksheet->getCellByColumnAndRow(5,$row)->getValue();
+                $jurusan_kelas = $worksheet->getCellByColumnAndRow(6,$row)->getValue();
+
+                $get_id_by_kelas = $this->m_model->get_by_kelas($tingkat_kelas, $jurusan_kelas);
+                echo $get_id_by_kelas;
+                $data = [
+                    'nama_siswa' => $nama_siswa,
+                    'nisn' => $nisn,
+                    'gender' => $gender,
+                    'id_kelas' => $get_id_by_kelas,
+                    'foto' => 'User.png'
+                ];
+                $this->m_model->add('siswa', $data);
+            }
+        }
+        redirect(base_url('admin/siswa'));
+       } else {
+        echo 'Invalid File';
+       }
     }
 }
