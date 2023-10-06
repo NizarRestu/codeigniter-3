@@ -13,7 +13,7 @@ class Admin extends CI_Controller
         $this->load->model('m_model');
         $this->load->helper('my_helper');
         $this->load->library('upload');
-        if ($this->session->userdata('logged_in') != true && $this->session->userdata('role') !== 'admin') {
+        if ($this->session->userdata('logged_in') != true || $this->session->userdata('role') !== 'admin') {
             redirect(base_url() . 'auth');
         }
     }
@@ -349,5 +349,18 @@ class Admin extends CI_Controller
        } else {
         echo 'Invalid File';
        }
+    }
+    public function export_guru() {
+        $data['data_guru'] = $this->m_model->get_data('guru')->result();
+        $data['nama'] = 'guru';
+        if($this->uri->segment(3) == "pdf") {
+            $this->load->library('pdf');
+            $this->pdf->load_view('page/export_data_guru', $data);
+            $this->pdf->render();
+            $this->pdf->stream("data_guru.pdf" , array("Attachment" => false));
+
+        } else{
+            $this->load->view('page/download_data_guru' , $data);
+        }
     }
 }
